@@ -29,4 +29,11 @@
 		android:entries="@array/settings_themes"
 		android:entryValues="@array/settings_themes_values"
 		/>
+	<ListPreference
+		android:key="sleeping_hours_setting"
+		android:title="@string/settings_sleeping_hours"
+		android:defaultValue="7"
+		android:entries="@array/settings_sleeping_hours"
+		android:entryValues="@array/settings_sleeping_hours"
+		/>
 </PreferenceScreen>
