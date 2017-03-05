@@ -29,6 +29,8 @@ public interface State {
         String ringtone();
 
         int theme();
+
+        double sleepingHours();
     }
 
     @Value.Immutable
@@ -70,6 +72,7 @@ public interface State {
                             .snap(true)
                             .vibrate(true)
                             .theme(0)
+                            .sleepingHours(7)
                             .build())
                     .build();
         }
@@ -97,6 +100,8 @@ public interface State {
                         return ImmutableSettings.copyOf(settings).withRingtone((String) action.value);
                     case SET_THEME:
                         return ImmutableSettings.copyOf(settings).withTheme((Integer) action.value);
+                    case SLEEPING_HOURS:
+                        return ImmutableSettings.copyOf(settings).withSleepingHours((Double) action.value);
                 }
             }
             return settings;
