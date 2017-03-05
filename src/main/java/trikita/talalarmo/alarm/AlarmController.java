@@ -16,6 +16,7 @@ import trikita.jedux.Store;
 import trikita.talalarmo.Actions;
 import trikita.talalarmo.MainActivity;
 import trikita.talalarmo.State;
+import trikita.talalarmo.ui.AlarmLayout;
 
 public class AlarmController implements Store.Middleware<Action, State> {
 
@@ -58,10 +59,15 @@ public class AlarmController implements Store.Middleware<Action, State> {
         }
     }
 
+    /**
+     * Reminder alarm works for android version > LOLLIPOP only. Support to be added for KITKAT or before
+     * */
     private void restartAlarm(State state) {
         Calendar c = state.alarm().nextAlarm();
+        Calendar reminderCal = AlarmLayout.getReminderTimeCalendar(c, state.settings().sleepingHours());
         Intent intent = new Intent(mContext, AlarmReceiver.class);
         PendingIntent sender = PendingIntent.getBroadcast(mContext, 0, intent, 0);
+        PendingIntent senderForReminderAlarm = PendingIntent.getBroadcast(mContext, 1, intent, 0); // different request code
 
         AlarmManager am = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
@@ -81,7 +87,10 @@ public class AlarmController implements Store.Middleware<Action, State> {
             Intent showIntent = new Intent(mContext, MainActivity.class);
             PendingIntent showOperation = PendingIntent.getActivity(mContext, 0, showIntent, PendingIntent.FLAG_UPDATE_CURRENT);
             AlarmManager.AlarmClockInfo alarmClockInfo = new AlarmManager.AlarmClockInfo(c.getTimeInMillis(), showOperation);
+            AlarmManager.AlarmClockInfo alarmClockInfoForReminder = new AlarmManager.AlarmClockInfo(
+                    reminderCal.getTimeInMillis(), showOperation);
             am.setAlarmClock(alarmClockInfo, sender);
+            am.setAlarmClock(alarmClockInfoForReminder, senderForReminderAlarm);
         }
     }
 

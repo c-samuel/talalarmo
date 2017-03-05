@@ -270,15 +270,17 @@ public class AlarmLayout {
         }
 
         Double sleepingHours = App.getState().settings().sleepingHours();
-        Calendar alarmCalendar = App.getState().alarm().nextAlarm();
-        alarmCalendar.add(Calendar.HOUR, -(sleepingHours.intValue()));
-        if (sleepingHours - sleepingHours.intValue() != 0) {
-            alarmCalendar.add(Calendar.MINUTE, -30);
-        }
+        Calendar reminderTimeCalendar = getReminderTimeCalendar(App.getState().alarm().nextAlarm(), sleepingHours);
         SimpleDateFormat format = new SimpleDateFormat("h:mm a", c.getResources().getConfiguration().locale);
         return c.getString(R.string.alarm_sleep_reminder,
-                format.format(alarmCalendar.getTime()),
+                format.format(reminderTimeCalendar.getTime()),
                 hasDecimal(sleepingHours) ? String.valueOf(sleepingHours) : String.valueOf(sleepingHours.intValue()));
+    }
+
+    public static Calendar getReminderTimeCalendar(Calendar existingAlarm, Double sleepingHours) {
+        Calendar reminderTimeCalendar = (Calendar) existingAlarm.clone();
+        reminderTimeCalendar.setTimeInMillis(reminderTimeCalendar.getTimeInMillis() - ((int) (1000 * 60 * 60 * sleepingHours)));
+        return reminderTimeCalendar;
     }
 
     private static boolean hasDecimal(Double d) {
