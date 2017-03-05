@@ -10,7 +10,8 @@ import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 
-import static trikita.anvil.DSL.*;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 import trikita.anvil.Anvil;
 import trikita.jedux.Action;
@@ -18,6 +19,40 @@ import trikita.talalarmo.Actions;
 import trikita.talalarmo.App;
 import trikita.talalarmo.MainActivity;
 import trikita.talalarmo.R;
+
+import static trikita.anvil.DSL.CENTER;
+import static trikita.anvil.DSL.CENTER_VERTICAL;
+import static trikita.anvil.DSL.FILL;
+import static trikita.anvil.DSL.LEFT;
+import static trikita.anvil.DSL.WRAP;
+import static trikita.anvil.DSL.allCaps;
+import static trikita.anvil.DSL.backgroundColor;
+import static trikita.anvil.DSL.checked;
+import static trikita.anvil.DSL.dip;
+import static trikita.anvil.DSL.frameLayout;
+import static trikita.anvil.DSL.gravity;
+import static trikita.anvil.DSL.isPortrait;
+import static trikita.anvil.DSL.layoutGravity;
+import static trikita.anvil.DSL.linearLayout;
+import static trikita.anvil.DSL.margin;
+import static trikita.anvil.DSL.max;
+import static trikita.anvil.DSL.onCheckedChange;
+import static trikita.anvil.DSL.onClick;
+import static trikita.anvil.DSL.onSeekBarChange;
+import static trikita.anvil.DSL.orientation;
+import static trikita.anvil.DSL.padding;
+import static trikita.anvil.DSL.progress;
+import static trikita.anvil.DSL.size;
+import static trikita.anvil.DSL.text;
+import static trikita.anvil.DSL.textColor;
+import static trikita.anvil.DSL.textSize;
+import static trikita.anvil.DSL.textView;
+import static trikita.anvil.DSL.typeface;
+import static trikita.anvil.DSL.v;
+import static trikita.anvil.DSL.visibility;
+import static trikita.anvil.DSL.weight;
+import static trikita.anvil.DSL.x;
+import static trikita.anvil.DSL.y;
 
 public class AlarmLayout {
     public static void view() {
@@ -233,23 +268,21 @@ public class AlarmLayout {
         if (!App.getState().alarm().on()) {
             return "";
         }
-        long t = App.getState().alarm().nextAlarm().getTimeInMillis() - System.currentTimeMillis() - 1;
-        t = t / 60 / 1000;
-        int m = (int) (t % 60);
-        int h = (int) (t / 60);
 
-        String minSeq = (m == 0) ? "" :
-                (m == 1) ? c.getString(R.string.minute) :
-                        c.getString(R.string.minutes, Long.toString(m));
+        Double sleepingHours = App.getState().settings().sleepingHours();
+        Calendar alarmCalendar = App.getState().alarm().nextAlarm();
+        alarmCalendar.add(Calendar.HOUR, -(sleepingHours.intValue()));
+        if (sleepingHours - sleepingHours.intValue() != 0) {
+            alarmCalendar.add(Calendar.MINUTE, -30);
+        }
+        SimpleDateFormat format = new SimpleDateFormat("h:mm a", c.getResources().getConfiguration().locale);
+        return c.getString(R.string.alarm_sleep_reminder,
+                format.format(alarmCalendar.getTime()),
+                hasDecimal(sleepingHours) ? String.valueOf(sleepingHours) : String.valueOf(sleepingHours.intValue()));
+    }
 
-        String hourSeq = (h == 0) ? "" :
-                (h == 1) ? c.getString(R.string.hour) :
-                        c.getString(R.string.hours, Long.toString(h));
-
-        int index = ((h > 0) ? 1 : 0) | ((m > 0) ? 2 : 0);
-
-        String[] formats = c.getResources().getStringArray(R.array.alarm_set);
-        return String.format(formats[index], hourSeq, minSeq);
+    private static boolean hasDecimal(Double d) {
+        return d - d.intValue() != 0;
     }
 
     private static void showSettingsMenu(View v) {

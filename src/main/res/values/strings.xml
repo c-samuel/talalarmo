@@ -16,6 +16,7 @@
     <string name="minute">1 minute</string>
     <string name="minutes">%s minutes</string>
 
+    <string name="alarm_sleep_reminder" formatted="false">You should sleep at %1$s to get a %2$s hours+ sleep.</string>
     <string-array name="alarm_set">
         <item>This alarm is set for less than 1 minute from now</item>
         <item>This alarm is set for %1$s from now</item>
