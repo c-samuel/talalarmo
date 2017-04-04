@@ -2,6 +2,11 @@
 
 [![Build Status](https://travis-ci.org/trikita/talalarmo.svg?branch=master)](https://travis-ci.org/trikita/talalarmo)
 
+## Difference from original repo:
+- Can set how many hours needed to sleep each day, then remind you to sleep at the specified time
+  - e.g. After setting alarm at 7:00, with 7.5 hours of sleep, the app will fire alarm at 12:30 to remind you to go to sleep
+
+
 <div>
 <img align="left" src="https://raw.githubusercontent.com/trikita/talalarmo/master/src/main/res/drawable-xxxhdpi/ic_launcher.png" alt="logo" width="96px" height="96px" />
 <p>
